@@ -5,6 +5,7 @@
         <title>scsAssistant</title>
 
         <link rel="stylesheet" href="static/vendors/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="static/vendors/selectize-0.12.4/selectize.bootstrap3.css">
 
     </head>
     <body>
@@ -14,7 +15,9 @@
             </div>
             <div class="row">
                 <div class="col-md-3">
-                    !!
+                    <select id="attackingUnit" class="form-control">
+                            <option value="" disabled selected style="display:none;">Select Attacking Unit</option>
+                    </select>
                 </div>
                 <div class="col-md-3">
                     !!
@@ -31,6 +34,7 @@
         <!-- Core js -->
         <script src="static/vendors/jquery/jquery-3.1.1.min.js"></script>
         <script src="static/vendors/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+        <script src="static/vendors/selectize-0.12.4/selectize.js"></script>
 
         <!-- Page-specific js -->
         <script src="index.js"></script>
