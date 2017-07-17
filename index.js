@@ -10,8 +10,8 @@
 
     var strike;
 
-    var Die1 = 2
-    var Die2 = 3
+    var Die1 = 2;
+    var Die2 = 3;
     var Attacker = {
       country:  "prc",
       type:     "naval",
@@ -33,7 +33,7 @@
       t:        2,
       tRange:   0,
       steps:    3
-    }
+    };
     var Defender = {
       country:  "prc",
       type:     "naval",
@@ -55,30 +55,29 @@
       t:        2,
       tRange:   0,
       steps:    3
-    }
+    };
     var TicksMissing = true;
     var AirDistance = null;
     var CombinedArmsLocation = null;
 
-    combatResolution(Die1,Die2,Attacker,Defender,Ticks,AirDistance,CombinedArmsLocation)
+    combatResolution(Die1,Die2,Attacker,Defender,Ticks,AirDistance,CombinedArmsLocation);
 
-    function combatResolution(die1, die2, attacker, defender, ticksMissing, airDistance, combinedArmsLocation, ){
+    function combatResolution(die1, die2, attacker, defender, ticksMissing, airDistance, combinedArmsLocation){
       strike = die1 + die2;
       if (defender.type == "naval"){
-        if (sameHex == true){
-          strike = strike + attacker.as
+        if (sameHex === true){
+          strike = strike + attacker.as;
         }
-        else if (sameHex == false){
-          strike = strike + attacker.g
+        else if (sameHex === false){
+          strike = strike + attacker.g;
         }
       }
       else if (defender.type ==  "air"){
-        strike = strike + attacker.aa
+        strike = strike + attacker.aa;
       }
       else if (defender.type == "land"){
-        strike =
+        strike = strike + attacker.ag;
       }
-      strike = strike + attacker.
       if (attacker.type == "air"){
       }
       else if (attacker.type == "combined arms"){
