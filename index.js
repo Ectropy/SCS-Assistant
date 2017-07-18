@@ -60,8 +60,49 @@
     var AirDistance = null;
     var CombinedArmsLocation = null;
 
-    combatResolution(Die1,Die2,Attacker,Defender,Ticks,AirDistance,CombinedArmsLocation);
+    combatRouter(Attacker, Defender)
 
+
+    combatRouter(attacker,defender,defTerrain){
+        if (defender.type == "air"){
+
+        }
+        else if (defender.type == "ground"){
+
+        }
+        else if (defender.type == "surface naval"){
+            if (defTerrain == "sea") {
+                if (attacker.as != null){
+                    $("divWeaponsSystems").show();
+                    $("btnAS").show();
+                }
+            }
+            else if (defTerrain == "port") {
+
+            }
+        }
+        /*else if (defender.type == "submarine"){
+            if (defTerrain == "sea") {
+                if (attacker.as != null){
+                    $("btnAS").show();
+                }
+            }
+            else if (defTerrain == "port") {
+
+            }
+        }*/
+        else if (defender.type == "fort"){
+
+        }
+        else if (defender.type == "airbase"){
+
+        }
+
+    }
+
+
+
+    //combatResolution(Die1,Die2,Attacker,Defender,Ticks,AirDistance,CombinedArmsLocation);
     function combatResolution(die1, die2, attacker, defender, ticksMissing, airDistance, combinedArmsLocation){
       strike = die1 + die2;
       if (defender.type == "naval"){
