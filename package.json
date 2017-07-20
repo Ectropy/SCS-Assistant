@@ -1,0 +1,8 @@
+{
+	"happiness": {
+    "globals": [
+      "$",
+			"prompt"
+    ]
+  }
+}
