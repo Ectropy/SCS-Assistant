@@ -60,6 +60,15 @@
 	var AirDistance = null;
 	var defTerrain = null;
 
+	// Global Defense variables
+	var AAdef = null;
+	var AGdef = null;
+	var ASdef = null;
+	var CAdef = null;
+	var Gdef = null;
+	var Tdef = null;
+	var Udef = null;
+
 	$('#btnSubmitCombatants').on('click', readCombatants);
 
 	// TODO change Attacker and Defender hardcoded to Attacker and Defender selected from dropdowns
@@ -70,14 +79,14 @@
 
 	function combatRouter (attacker, defender) {
 		console.log('combatRouter');
-		// Set defense values to null
-		var AAdef = null;
-		var AGdef = null;
-		var ASdef = null;
-		var CAdef = null;
-		var Gdef = null;
-		var Tdef = null;
-		var Udef = null;
+		// Reset global defense values to null in case they have been modified
+		AAdef = null;
+		AGdef = null;
+		ASdef = null;
+		CAdef = null;
+		Gdef = null;
+		Tdef = null;
+		Udef = null;
 
 		// determine what type of unit the defender is
 		if (defender.type === 'surface naval') {
@@ -87,6 +96,10 @@
 					Gdef = 9;
 					Tdef = 9;
 					ASdef = defender.md;
+					var localAMD = promptAMDInRange();
+					if (localAMD > ASdef) {
+						ASdef = localAMD;
+					}
 					break;
 				case 'port':
 					console.log('port');
@@ -95,6 +108,7 @@
 				default:
 					console.log('ERROR INVALID LOCATION');
 			}
+			showDefenderDefenseScores();
 			showValidWeaponsSystems(attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef);
 		} else if (defender.type === 'submarine') {
 			switch (promptSubmarineLocation()) {
@@ -133,6 +147,19 @@
 		}
 	}
 
+	function showDefenderDefenseScores () {
+		var html = '<div class="col-md-12">';
+		html += '<p>The defending unit has the following defense scores</p>';
+		html += '<p>AA Def:' + AAdef + '</p>';
+		html += '<p>AG Def:' + AGdef + '</p>';
+		html += '<p>AS Def:' + ASdef + '</p>';
+		html += '<p>CA Def:' + CAdef + '</p>';
+		html += '<p>G Def:' + Gdef + '</p>';
+		html += '<p>T Def:' + Tdef + '</p>';
+		html += '<p>U Def:' + Udef + '</p>';
+		$('#divDefenderDefenseScores').html(html);
+		$('#divDefenderDefenseScores').show();
+	}
 	function showValidWeaponsSystems (attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef) {
 		if (AAdef !== null) {
 			if (attacker.aa !== null) {
