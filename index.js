@@ -41,7 +41,7 @@
 		// Write unit info to dropdowns (must be done before instantiating selectizes)
 		var html = '<option value="" disabled selected style="display:none;">Select Defending Unit</option>';
 		for (var i = 0; i < units.length; i++) {
-			html += '<option value="' + units[i].unitId + '">' + units[i].typeUnit + '</option>';
+			html += '<option value="' + units[i].unitId + '">' + units[i].type + ' - ' + units[i].typeUnit + '</option>';
 		}
 		$('#attackingUnit').html(html);
 		$('#defendingUnit').html(html);
@@ -75,6 +75,10 @@
 				break;
 			}
 		}
+		console.log('Defender');
+		console.log(defender);
+		console.log('Attacker');
+		console.log(attacker);
 		combatRouter(attacker, defender);
 	}
 
@@ -90,13 +94,13 @@
 		Udef = null;
 
 		// determine what type of unit the defender is
-		if (defender.type === 'surface naval') {
+		if (defender.type === 'Surface Naval') {
 			switch (promptSurfaceNavalLocation()) {
 				case 'sea':
 					console.log('sea');
 					Gdef = 9;
 					Tdef = 9;
-					ASdef = defender.md;
+					ASdef = parseFloat(defender.md); // Always parse the numbers stored in the Units array, because they are strings.
 					var localAMD = promptAMDInRange();
 					if (localAMD > ASdef) {
 						ASdef = localAMD;
@@ -111,7 +115,7 @@
 			}
 			showDefenderDefenseScores();
 			showValidWeaponsSystems(attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef);
-		} else if (defender.type === 'submarine') {
+		} else if (defender.type === 'Submarine') {
 			switch (promptSubmarineLocation()) {
 				case 'sea':
 					console.log('sea');
@@ -122,8 +126,8 @@
 				default:
 					console.log('ERROR INVALID LOCATION');
 			}
-		} else if (defender.type === 'air') {
-		} else if (defender.type === 'ground') {
+		} else if (defender.type === 'Air') {
+		} else if (defender.type === 'Ground') {
 		}
 	}
 
