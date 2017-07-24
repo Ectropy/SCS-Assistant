@@ -1,73 +1,11 @@
 (function (window) {
 	'use strict';
 
-	// Set up the selectizes.
-	$('#attackingUnit').selectize({
-	});
-
-	$('#defendingUnit').selectize({
-	});
-
-	var units;
-	// Convert units csv to objects.
-	// First get file from server using ajax
-	$.ajax({
-		type: 'GET',
-		url: 'units.csv',
-		dataType: 'text',
-		success: function (unitsData) {
-			// Next, use jquery-csv to parse
-			units = $.csv.toObjects(unitsData);
-			console.log(units);
-		}
-	});
-
+	//Global variables
+	var Units;
 	var strike;
-
 	var Die1 = 2;
 	var Die2 = 3;
-	var Attacker = {
-		country: 'prc',
-		type: 'surface naval',
-		typeUnit: 'CG Type 55',
-		move: 4,
-		stealth: 2,
-		ca: null,
-		g: 2,
-		gRange: 0,
-		u: 2,
-		uRange: 0,
-		as: 4,
-		asRange: 6,
-		ag: 4,
-		agRange: 10,
-		md: 9,
-		amd: null,
-		aa: null,
-		t: 2,
-		steps: 3
-	};
-	var Defender = {
-		country: 'prc',
-		type: 'surface naval',
-		typeUnit: 'CG Type 55',
-		move: 4,
-		stealth: 2,
-		ca: null,
-		g: 2,
-		gRange: 0,
-		u: 2,
-		uRange: 0,
-		as: 4,
-		asRange: 6,
-		ag: 4,
-		agRange: 10,
-		md: 9,
-		amd: null,
-		aa: null,
-		t: 2,
-		steps: 3
-	};
 	var TicksMissing = true;
 	var AirDistance = null;
 	var defTerrain = null;
@@ -81,12 +19,63 @@
 	var Tdef = null;
 	var Udef = null;
 
+	loadUnits();
+
+	function loadUnits () {
+		// First get file from server using ajax
+		$.ajax({
+			type: 'GET',
+			url: 'units.csv',
+			dataType: 'text',
+			success: function (unitsData) {
+				// Next, use jquery-csv to parse
+				var units = $.csv.toObjects(unitsData);
+				console.log(units);
+				Units = units; // write to global
+				populateCombatants(units);
+			}
+		});
+	}
+
+	function populateCombatants (units) {
+		// Write unit info to dropdowns (must be done before instantiating selectizes)
+		var html = '<option value="" disabled selected style="display:none;">Select Defending Unit</option>';
+		for (var i = 0; i < units.length; i++) {
+			html += '<option value="' + units[i].unitId + '">' + units[i].typeUnit + '</option>';
+		}
+		$('#attackingUnit').html(html);
+		$('#defendingUnit').html(html);
+
+		instantiateSelectize();
+	}
+
+	function instantiateSelectize () {
+		// Set up the selectizes.
+		$('#attackingUnit').selectize({
+		});
+
+		$('#defendingUnit').selectize({
+		});
+	}
+
 	$('#btnSubmitCombatants').on('click', readCombatants);
 
-	// TODO change Attacker and Defender hardcoded to Attacker and Defender selected from dropdowns
 	function readCombatants () {
-		console.log('readCombatants');
-		combatRouter(Attacker, Defender);
+		var attacker = null;
+		var defender = null;
+		for (var i = 0; i < Units.length; i++) {
+			if (Units[i].unitId === $('#attackingUnit').val()) {
+				attacker = Units[i];
+				break;
+			}
+		}
+		for (var j = 0; j < Units.length; j++) {
+			if (Units[j].unitId === $('#defendingUnit').val()) {
+				defender = Units[j];
+				break;
+			}
+		}
+		combatRouter(attacker, defender);
 	}
 
 	function combatRouter (attacker, defender) {
