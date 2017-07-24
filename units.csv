@@ -1,4 +1,4 @@
-Country,Type,# Units,Type Unit,Move/Radius,Stealth,CA,G,G range,U,U range,AS,AS range,AG,AG range,MD,AA,T,Steps,reduced step,Remarks
+country,type,numOfUnits,typeUnit,move,stealth,ca,g,gRange,u,uRange,as,asRange,ag,agRange,md,aa,t,steps,reduced step,Remarks
 PRC,Air,3,H-6G Badger,21,0,x,x,x,4,0,4,0,x,x,9,1,x,2,same,
 PRC,Air,3,H-6K Badger,21,0,x,x,x,x,x,x,x,4,20,9,1,x,2,same,
 PRC,Air,6,J-11 Flanker,9,1,x,x,x,x,x,1,0,3,0,10,3,x,2,same,
