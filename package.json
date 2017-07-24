@@ -2,7 +2,7 @@
 	"happiness": {
     "globals": [
       "$",
-			"prompt"
+	  "prompt"
     ]
   }
 }

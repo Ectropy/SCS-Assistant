@@ -8,6 +8,20 @@
 	$('#defendingUnit').selectize({
 	});
 
+	var units;
+	// Convert units csv to json.
+	// First get file from server using ajax
+	$.ajax({
+		type: "GET",
+		url: "units.csv",
+		dataType: "text",
+		success: function (unitsData) {
+			// Next, use jquery-csv to parse
+			units = $.csv.toObjects(unitsData);
+			console.log(units);
+		}
+	});
+
 	var strike;
 
 	var Die1 = 2;
@@ -31,7 +45,6 @@
 		amd: null,
 		aa: null,
 		t: 2,
-		tRange: 0,
 		steps: 3
 	};
 	var Defender = {
@@ -53,7 +66,6 @@
 		amd: null,
 		aa: null,
 		t: 2,
-		tRange: 0,
 		steps: 3
 	};
 	var TicksMissing = true;
