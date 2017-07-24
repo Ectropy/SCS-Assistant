@@ -9,12 +9,12 @@
 	});
 
 	var units;
-	// Convert units csv to json.
+	// Convert units csv to objects.
 	// First get file from server using ajax
 	$.ajax({
-		type: "GET",
-		url: "units.csv",
-		dataType: "text",
+		type: 'GET',
+		url: 'units.csv',
+		dataType: 'text',
 		success: function (unitsData) {
 			// Next, use jquery-csv to parse
 			units = $.csv.toObjects(unitsData);
