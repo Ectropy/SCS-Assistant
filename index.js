@@ -6,11 +6,7 @@
 	var Attacker;
 	var Defender;
 	var Strike;
-	var Die1 = 2;
-	var Die2 = 3;
-	var TicksMissing = true;
-	var AirDistance = null;
-	var defTerrain = null;
+	var DefScore;
 
 	// Global Defense variables
 	var AAdef = null;
@@ -306,30 +302,37 @@
 
 	$('#btnAA').on('click', function () {
 		Strike = parseFloat(Attacker.aa);
+		DefScore = AAdef;
 		promptAttackerTicks(promptAirRangeCheck);
 	});
 	$('#btnAG').on('click', function () {
 		Strike = parseFloat(Attacker.ag);
+		DefScore = AGdef;
 		promptAttackerTicks(promptAirRangeCheck);
 	});
 	$('#btnAS').on('click', function () {
 		Strike = parseFloat(Attacker.as);
+		DefScore = ASdef;
 		promptAttackerTicks(promptAirRangeCheck);
 	});
 	$('#btnCA').on('click', function () {
 		Strike = parseFloat(Attacker.ca);
+		DefScore = CAdef;
 		promptAttackerTicks();
 	});
 	$('#btnG').on('click', function () {
 		Strike = parseFloat(Attacker.g);
+		DefScore = Gdef;
 		promptAttackerTicks();
 	});
 	$('#btnT').on('click', function () {
 		Strike = parseFloat(Attacker.t);
+		DefScore = Tdef;
 		promptAttackerTicks();
 	});
 	$('#btnU').on('click', function () {
 		Strike = parseFloat(Attacker.u);
+		DefScore = Udef;
 		promptAttackerTicks(promptAirRangeCheck);
 	});
 
@@ -357,9 +360,11 @@
 			});
 			function callbackYes () {
 				Strike = Strike - 1;
+				showRequiredRoll();
 			}
 			function callbackNo () {
 				// Strike is unchanged.
+				showRequiredRoll();
 			}
 		}
 	}
@@ -391,5 +396,10 @@
 			// Strike is unchanged.
 			nextStep();
 		}
+	}
+
+	function showRequiredRoll () {
+		var roll = DefScore - Strike;
+		alert('defscore ' + DefScore + ' strike ' + Strike + ' roll ' + roll + 'To inflict 1 tick of damage you must roll ' + (roll + 1));
 	}
 })(window);
