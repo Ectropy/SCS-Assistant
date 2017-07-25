@@ -95,60 +95,137 @@
 
 		// determine what type of unit the defender is
 		if (defender.type === 'Surface Naval') {
-			switch (promptSurfaceNavalLocation()) {
+			promptSurfaceNavalLocation(attacker, defender);
+		} else if (defender.type === 'Submarine') {
+			switch (promptSubmarineLocation()) {
 				case 'sea':
 					console.log('sea');
-					Gdef = 9;
-					Tdef = 9;
-					ASdef = parseFloat(defender.md); // Always parse the numbers stored in the Units array, because they are strings.
-					var localAMD = promptAMDInRange();
-					if (localAMD > ASdef) {
-						ASdef = localAMD;
-					}
+					Tdef = 8;
+					Udef = 8;
 					break;
 				case 'port':
 					console.log('port');
-					ASdef = promptAMDInRange();
+					ASdef = 8;
+					var subAMD = promptAMDInRange();
+					if (subAMD > ASdef) {
+						ASdef = subAMD;
+					}
 					break;
 				default:
 					console.log('ERROR INVALID LOCATION');
 			}
 			showDefenderDefenseScores();
 			showValidWeaponsSystems(attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef);
-		} else if (defender.type === 'Submarine') {
-			switch (promptSubmarineLocation()) {
-				case 'sea':
-					console.log('sea');
-					break;
-				case 'port':
-					console.log('port');
-					break;
-				default:
-					console.log('ERROR INVALID LOCATION');
-			}
 		} else if (defender.type === 'Air') {
+			AAdef = parseFloat(defender.md); // TODO can air be defended by area missile defense?
 		} else if (defender.type === 'Ground') {
+			CAdef = 9;
+			Gdef = 9;
+			console.log(defender.md);
 		}
 	}
 
-	function promptSurfaceNavalLocation () {
-		return prompt("Is the defending surface naval unit at sea or in port? (Type 'sea' or 'port')");
+	function promptSurfaceNavalLocation (attacker, defender) {
+		bootbox.dialog({
+			closeButton: false,
+			animate: false,
+			title: 'Unit Location',
+			message: 'Is the defending unit located at sea or in port?',
+			buttons: {
+				btnSea: {
+					label: 'At Sea',
+					className: 'btn-primary',
+					callback: callbackSea
+				},
+				btnPort: {
+					label: 'In Port',
+					className: 'btn-primary',
+					callback: callbackPort
+				}
+			}
+		});
+
+		function callbackSea () {
+			console.log('sea');
+			Gdef = 9;
+			Tdef = 8;
+			ASdef = parseFloat(defender.md); // Always parse the numbers stored in the Units array, because they are strings.
+			promptAMDInRange(attacker, defender);
+		}
+		function callbackPort () {
+			console.log('port');
+			ASdef = 8; // “in port” ships only defend at MD of 8 regardless of its own (A)MD (5.363)
+			promptAMDInRange(attacker, defender);
+		}
 	}
 
 	function promptSubmarineLocation () {
 		return prompt("Is the defending submarine unit at sea or in port? (Type 'sea' or 'port')");
 	}
 
-	function promptAMDInRange () {
-		switch (prompt("Is there a unit Area Missile Defense (AMD) within range (same hex or adjacent hex) of the defending unit? (Type 'yes' or 'no')")) {
-			case 'yes':
-				return prompt('What is the AMD score of the unit providing Area Missle Defense?');
-				// break;
-			case 'no':
-				return 8;
-				// break;
-			default:
-				console.log('ERROR INVALID RESPONSE');
+	function promptAMDInRange (attacker, defender) {
+		bootbox.dialog({
+			closeButton: false,
+			animate: false,
+			title: 'Area Missle Defense',
+			message: 'Is there a unit providing Area Missile Defense (AMD) within range (same hex or adjacent hex) of the defending unit?',
+			buttons: {
+				btnYes: {
+					label: 'Yes',
+					className: 'btn-primary',
+					callback: callbackYes
+				},
+				btnNo: {
+					label: 'No',
+					className: 'btn-danger',
+					callback: callbackNo
+				}
+			}
+		});
+		function callbackYes () {
+			promptAMDScore(attacker, defender);
+		}
+		function callbackNo () {
+			// Lease ASdef unchanged.
+			showDefenderDefenseScores();
+			showValidWeaponsSystems(attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef);
+		}
+	}
+
+	function promptAMDScore (attacker, defender) {
+		bootbox.dialog({
+			closeButton: false,
+			animate: false,
+			title: 'Area Missle Defense Score',
+			message: 'How much AMD does the unit providing Area Missle Defense have?',
+			buttons: {
+				btn10: {
+					label: 'AMD 10',
+					className: 'btn-primary',
+					callback: callback10
+				},
+				btn11: {
+					label: 'AMD 11',
+					className: 'btn-primary',
+					callback: callback11
+				}
+			}
+		});
+		function callback10 () {
+			// Set ASdef to AMD if AMD is greater than the existing ASdef
+			if (ASdef < 10) {
+				ASdef = 10;
+			}
+			showDefenderDefenseScores();
+			showValidWeaponsSystems(attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef);
+		}
+		function callback11 () {
+			// Set ASdef to AMD if AMD is greater than the existing ASdef
+			if (ASdef < 11) {
+				ASdef = 11;
+			}
+			showDefenderDefenseScores();
+			showValidWeaponsSystems(attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef);
 		}
 	}
 
