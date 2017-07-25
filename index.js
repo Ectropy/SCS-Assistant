@@ -255,36 +255,43 @@
 
 		if (AAdef !== null) {
 			if (Attacker.aa !== 'x') {
+				untargetable = false;
 				$('#btnAA').prop('disabled', false).attr('class', 'btn btn-success');
 			}
 		}
 		if (AGdef !== null) {
 			if (Attacker.ag !== 'x') {
+				untargetable = false;
 				$('#btnAG').prop('disabled', false).attr('class', 'btn btn-success');
 			}
 		}
 		if (ASdef !== null) {
 			if (Attacker.as !== 'x') {
+				untargetable = false;
 				$('#btnAS').prop('disabled', false).attr('class', 'btn btn-success');
 			}
 		}
 		if (CAdef !== null) {
 			if (Attacker.ca !== 'x') {
+				untargetable = false;
 				$('#btnCA').prop('disabled', false).attr('class', 'btn btn-success');
 			}
 		}
 		if (Gdef !== null) {
 			if (Attacker.g !== 'x') {
+				untargetable = false;
 				$('#btnG').prop('disabled', false).attr('class', 'btn btn-success');
 			}
 		}
 		if (Tdef !== null) {
 			if (Attacker.t !== 'x') {
+				untargetable = false;
 				$('#btnT').prop('disabled', false).attr('class', 'btn btn-success');
 			}
 		}
 		if (Udef !== null) {
 			if (Attacker.u !== 'x') {
+				untargetable = false;
 				$('#btnU').prop('disabled', false).attr('class', 'btn btn-success');
 			}
 		}
@@ -328,11 +335,13 @@
 
 	function promptAirRangeCheck () {
 		if (Attacker.type === 'Air') {
+			var maxDistance = parseFloat(Attacker.move) / 2;
+
 			bootbox.dialog({
 				closeButton: false,
 				animate: false,
 				title: 'Air Range',
-				message: 'Is the Attcking unit\'s hex more than ?',
+				message: 'Is the Attcking unit\'s hex more than ' + maxDistance + ' hexes (1/2 attacker\'s move radius) from the defending unit\'s hex?',
 				buttons: {
 					btnYes: {
 						label: 'Yes, -1 to strike',
@@ -347,8 +356,10 @@
 				}
 			});
 			function callbackYes () {
+				Strike = Strike - 1;
 			}
 			function callbackNo () {
+				// Strike is unchanged.
 			}
 		}
 	}
@@ -375,14 +386,10 @@
 		function callbackYes () {
 			Strike = Strike - 1;
 			nextStep();
-
 		}
 		function callbackNo () {
 			// Strike is unchanged.
 			nextStep();
 		}
 	}
-	var AA = function () {
-
-	};
 })(window);
