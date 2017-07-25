@@ -2,7 +2,8 @@
 	"happiness": {
     "globals": [
       "$",
-	  "prompt"
+	  "prompt",
+	  "bootbox"
     ]
   }
 }
