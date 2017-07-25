@@ -30,8 +30,12 @@
                     <button class="btn btn-default" id="btnSubmitCombatants">Submit Combatants</button>
                 </div>
             </div> <!-- .row -->
-						<div class="row" id="divDefenderDefenseScores" style="display:none">
-						</div>
+			<div class="row">
+                <div class="col-md-4">
+                </div>
+                <div class="col-md-4" id="divDefenderDefenseScores" style="display:none">
+                </div>
+			</div>
             <div class="row" id="divWeaponsSystems" style="display:none">
                 <div class="col-md-12">
                     <p>The highlighted weapons systems are avalible to engage this target. Which would you like to use?</p>
@@ -43,6 +47,9 @@
                     <button class="btn btn-default" id="btnT" disabled>Torpedo</button>
                     <button class="btn btn-default" id="btnU" disabled>Anti-submarine</button>
                 </div>
+            </div>
+            <div class="row" id="divUntargetable" style="display:none">
+                <div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> <strong>UNTARGETABLE</strong> The attacker has no weapons systems that can target this defender.</div>
             </div>
         </div>
 

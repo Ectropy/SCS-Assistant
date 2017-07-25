@@ -3,7 +3,9 @@
 
 	//Global variables
 	var Units;
-	var strike;
+	var Attacker;
+	var Defender;
+	var Strike;
 	var Die1 = 2;
 	var Die2 = 3;
 	var TicksMissing = true;
@@ -39,12 +41,12 @@
 
 	function populateCombatants (units) {
 		// Write unit info to dropdowns (must be done before instantiating selectizes)
-		var html = '<option value="" disabled selected style="display:none;">Select Defending Unit</option>';
+		var html;
 		for (var i = 0; i < units.length; i++) {
 			html += '<option value="' + units[i].unitId + '">' + units[i].type + ' - ' + units[i].typeUnit + '</option>';
 		}
-		$('#attackingUnit').html(html);
-		$('#defendingUnit').html(html);
+		$('#attackingUnit').html('<option value="" disabled selected style="display:none;">Select Attacking Unit</option>' + html);
+		$('#defendingUnit').html('<option value="" disabled selected style="display:none;">Select Defending Unit</option>' + html);
 
 		instantiateSelectize();
 	}
@@ -57,6 +59,8 @@
 		$('#defendingUnit').selectize({
 		});
 	}
+
+// ==================== Defense Calculations ====================
 
 	$('#btnSubmitCombatants').on('click', readCombatants);
 
@@ -75,14 +79,16 @@
 				break;
 			}
 		}
-		console.log('Defender');
-		console.log(defender);
+		Attacker = attacker;
 		console.log('Attacker');
 		console.log(attacker);
-		combatRouter(attacker, defender);
+		Defender = defender;
+		console.log('Defender');
+		console.log(defender);
+		combatRouter();
 	}
 
-	function combatRouter (attacker, defender) {
+	function combatRouter () {
 		console.log('combatRouter');
 		// Reset global defense values to null in case they have been modified
 		AAdef = null;
@@ -94,9 +100,9 @@
 		Udef = null;
 
 		// determine what type of unit the defender is
-		if (defender.type === 'Surface Naval') {
-			promptSurfaceNavalLocation(attacker, defender);
-		} else if (defender.type === 'Submarine') {
+		if (Defender.type === 'Surface Naval') {
+			promptSurfaceNavalLocation();
+		} else if (Defender.type === 'Submarine') {
 			switch (promptSubmarineLocation()) {
 				case 'sea':
 					console.log('sea');
@@ -115,17 +121,19 @@
 					console.log('ERROR INVALID LOCATION');
 			}
 			showDefenderDefenseScores();
-			showValidWeaponsSystems(attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef);
-		} else if (defender.type === 'Air') {
-			AAdef = parseFloat(defender.md); // TODO can air be defended by area missile defense?
-		} else if (defender.type === 'Ground') {
+			showValidWeaponsSystems(Attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef);
+		} else if (Defender.type === 'Air') {
+			AAdef = parseFloat(Defender.md); // TODO can air be defended by area missile defense?
+			showDefenderDefenseScores();
+			showValidWeaponsSystems(Attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef);
+		} else if (Defender.type === 'Ground') {
 			CAdef = 9;
 			Gdef = 9;
-			console.log(defender.md);
+			console.log(Defender.md);
 		}
 	}
 
-	function promptSurfaceNavalLocation (attacker, defender) {
+	function promptSurfaceNavalLocation () {
 		bootbox.dialog({
 			closeButton: false,
 			animate: false,
@@ -149,13 +157,13 @@
 			console.log('sea');
 			Gdef = 9;
 			Tdef = 8;
-			ASdef = parseFloat(defender.md); // Always parse the numbers stored in the Units array, because they are strings.
-			promptAMDInRange(attacker, defender);
+			ASdef = parseFloat(Defender.md); // Always parse the numbers stored in the Units array, because they are strings.
+			promptAMDInRange();
 		}
 		function callbackPort () {
 			console.log('port');
 			ASdef = 8; // “in port” ships only defend at MD of 8 regardless of its own (A)MD (5.363)
-			promptAMDInRange(attacker, defender);
+			promptAMDInRange();
 		}
 	}
 
@@ -163,7 +171,7 @@
 		return prompt("Is the defending submarine unit at sea or in port? (Type 'sea' or 'port')");
 	}
 
-	function promptAMDInRange (attacker, defender) {
+	function promptAMDInRange () {
 		bootbox.dialog({
 			closeButton: false,
 			animate: false,
@@ -183,16 +191,16 @@
 			}
 		});
 		function callbackYes () {
-			promptAMDScore(attacker, defender);
+			promptAMDScore();
 		}
 		function callbackNo () {
 			// Lease ASdef unchanged.
 			showDefenderDefenseScores();
-			showValidWeaponsSystems(attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef);
+			showValidWeaponsSystems(Attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef);
 		}
 	}
 
-	function promptAMDScore (attacker, defender) {
+	function promptAMDScore () {
 		bootbox.dialog({
 			closeButton: false,
 			animate: false,
@@ -217,7 +225,7 @@
 				ASdef = 10;
 			}
 			showDefenderDefenseScores();
-			showValidWeaponsSystems(attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef);
+			showValidWeaponsSystems(Attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef);
 		}
 		function callback11 () {
 			// Set ASdef to AMD if AMD is greater than the existing ASdef
@@ -225,7 +233,7 @@
 				ASdef = 11;
 			}
 			showDefenderDefenseScores();
-			showValidWeaponsSystems(attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef);
+			showValidWeaponsSystems(Attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef);
 		}
 	}
 
@@ -242,42 +250,139 @@
 		$('#divDefenderDefenseScores').html(html);
 		$('#divDefenderDefenseScores').show();
 	}
-	function showValidWeaponsSystems (attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef) {
+	function showValidWeaponsSystems (Attacker, AAdef, AGdef, ASdef, CAdef, Gdef, Tdef, Udef) {
+		var untargetable = true; // If this variable is not false by the end of this function, then the attacker has no weapons systems that can target this defender.
+
 		if (AAdef !== null) {
-			if (attacker.aa !== null) {
+			if (Attacker.aa !== 'x') {
 				$('#btnAA').prop('disabled', false).attr('class', 'btn btn-success');
 			}
 		}
 		if (AGdef !== null) {
-			if (attacker.ag !== null) {
+			if (Attacker.ag !== 'x') {
 				$('#btnAG').prop('disabled', false).attr('class', 'btn btn-success');
 			}
 		}
 		if (ASdef !== null) {
-			if (attacker.as !== null) {
+			if (Attacker.as !== 'x') {
 				$('#btnAS').prop('disabled', false).attr('class', 'btn btn-success');
 			}
 		}
 		if (CAdef !== null) {
-			if (attacker.ca !== null) {
+			if (Attacker.ca !== 'x') {
 				$('#btnCA').prop('disabled', false).attr('class', 'btn btn-success');
 			}
 		}
 		if (Gdef !== null) {
-			if (attacker.g !== null) {
+			if (Attacker.g !== 'x') {
 				$('#btnG').prop('disabled', false).attr('class', 'btn btn-success');
 			}
 		}
 		if (Tdef !== null) {
-			if (attacker.t !== null) {
+			if (Attacker.t !== 'x') {
 				$('#btnT').prop('disabled', false).attr('class', 'btn btn-success');
 			}
 		}
 		if (Udef !== null) {
-			if (attacker.u !== null) {
+			if (Attacker.u !== 'x') {
 				$('#btnU').prop('disabled', false).attr('class', 'btn btn-success');
 			}
 		}
-		$('#divWeaponsSystems').show();
+		if (untargetable === false) {
+			$('#divWeaponsSystems').show();
+		} else {
+			$('#divUntargetable').show();
+		}
 	}
+
+	// ==================== Attack Calculations ====================
+
+	$('#btnAA').on('click', function () {
+		Strike = parseFloat(Attacker.aa);
+		promptAttackerTicks(promptAirRangeCheck);
+	});
+	$('#btnAG').on('click', function () {
+		Strike = parseFloat(Attacker.ag);
+		promptAttackerTicks(promptAirRangeCheck);
+	});
+	$('#btnAS').on('click', function () {
+		Strike = parseFloat(Attacker.as);
+		promptAttackerTicks(promptAirRangeCheck);
+	});
+	$('#btnCA').on('click', function () {
+		Strike = parseFloat(Attacker.ca);
+		promptAttackerTicks();
+	});
+	$('#btnG').on('click', function () {
+		Strike = parseFloat(Attacker.g);
+		promptAttackerTicks();
+	});
+	$('#btnT').on('click', function () {
+		Strike = parseFloat(Attacker.t);
+		promptAttackerTicks();
+	});
+	$('#btnU').on('click', function () {
+		Strike = parseFloat(Attacker.u);
+		promptAttackerTicks(promptAirRangeCheck);
+	});
+
+	function promptAirRangeCheck () {
+		if (Attacker.type === 'Air') {
+			bootbox.dialog({
+				closeButton: false,
+				animate: false,
+				title: 'Air Range',
+				message: 'Is the Attcking unit\'s hex more than ?',
+				buttons: {
+					btnYes: {
+						label: 'Yes, -1 to strike',
+						className: 'btn-danger',
+						callback: callbackYes
+					},
+					btnNo: {
+						label: 'No, strike unchanged',
+						className: 'btn-success',
+						callback: callbackNo
+					}
+				}
+			});
+			function callbackYes () {
+			}
+			function callbackNo () {
+			}
+		}
+	}
+
+	function promptAttackerTicks (nextStep) {
+		bootbox.dialog({
+			closeButton: false,
+			animate: false,
+			title: 'Missing Ticks',
+			message: 'Is the attacking unit missing any ticks?',
+			buttons: {
+				btnYes: {
+					label: 'Yes, -1 to strike',
+					className: 'btn-danger',
+					callback: callbackYes
+				},
+				btnNo: {
+					label: 'No, strike unchanged',
+					className: 'btn-success',
+					callback: callbackNo
+				}
+			}
+		});
+		function callbackYes () {
+			Strike = Strike - 1;
+			nextStep();
+
+		}
+		function callbackNo () {
+			// Strike is unchanged.
+			nextStep();
+		}
+	}
+	var AA = function () {
+
+	};
 })(window);
