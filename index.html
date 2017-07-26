@@ -31,13 +31,14 @@
                 </div>
             </div> <!-- .row -->
 			<div class="row">
-                <div class="col-md-4">
+                <div class="col-md-4" id="divAttackerAttackScores" style="display:none">
                 </div>
                 <div class="col-md-4" id="divDefenderDefenseScores" style="display:none">
                 </div>
 			</div>
             <div class="row" id="divWeaponsSystems" style="display:none">
                 <div class="col-md-12">
+                    <h2>Select a Weapons System</h2>
                     <p>The highlighted weapons systems are avalible to engage this target. Which would you like to use?</p>
                     <button class="btn btn-default" id="btnAA" disabled>Anti-air missile</button>
                     <button class="btn btn-default" id="btnAG" disabled>Anti-ground missile</button>
@@ -50,6 +51,9 @@
             </div>
             <div class="row" id="divUntargetable" style="display:none">
                 <div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> <strong>UNTARGETABLE</strong> The attacker has no weapons systems that can target this defender.</div>
+            </div>
+            <div id="divRequiredRoll" style="display:none">
+                <!-- filled by js -->
             </div>
         </div>
 
